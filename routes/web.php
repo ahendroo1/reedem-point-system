@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 
-use Illuminate\Support\Facades\DB;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,49 +14,13 @@ use Illuminate\Support\Facades\DB;
 */
 
 
-Route::get('/', function(){
-
-    if (!isset($_COOKIE['xf_user'])) {
-        # code...
-        return redirect('../../login');
-    }
-
-
-    $xf_user = $_COOKIE['xf_user']; 
-    $output = explode(",", $xf_user);
-    $id = $output[0];
-
-
-    $xf_user = DB::table('xf_user')->where('user_id', $id)->first();
-    if($xf_user->is_admin > 0){
-        return redirect('/admin-trophy');
-    } else {
-        return view('index');
-    }
-    
-});
+Route::get('/', 'CouponController@createcategory');
 
 Route::get('/reedem', 'IndexController@reedem');
+Route::post('/create-category', 'CouponController@createcategory');
 
-Route::get('/admin-trophy', function(){
-    
-    if (!isset($_COOKIE['xf_user'])) {
-        # code...
-        return redirect('../../login');
-    }
-
-    $xf_user = $_COOKIE['xf_user']; 
-    $output = explode(",", $xf_user);
-    $id = $output[0];
-
-    $xf_user = DB::table('xf_user')->where('user_id', $id)->first();
-    if($xf_user->is_admin == 1){
-        return view('admin');
-    } else {
-        return redirect('/');
-    }
-    
-
-});
+Route::get('/admin-trophy', 'AdminController@trophy');
+Route::get('/admin-coupon', 'AdminController@coupon');
 
 
+Route::get('/delete-category-coupon/{id}', 'CouponController@deletecategory');
