@@ -1,7 +1,6 @@
 @extends('admin.base')
 @section('content')
 
-<!-- BODY -->
         
 <style>
     .offCanvasMenu-closer::after{
@@ -56,7 +55,7 @@
 								
 									<div class="p-title-pageAction">
                                         <a href="#" class="button button--icon "  data-toggle="modal" data-target="#exampleModal">
-                                            <span class="button-text">Create Coupon</span>
+                                            <span class="button-text">Create Category </span>
                                         </a>
                                     </div>
                                     
@@ -145,12 +144,7 @@
                                     </a>
                                 </td>
                                 <td class="dataList-cell dataList-cell--iconic dataList-cell--alt dataList-cell--action">
-                                    <a href="{{url('coupon-id/'.$item->coupon_category_id)}}" class="iconic iconic--delete " data-xf-init="tooltip" title="Edit" >
-                                        <i class="fa fa-id-card"></i>
-                                    </a>
-                                </td>
-                                <td class="dataList-cell dataList-cell--iconic dataList-cell--alt dataList-cell--action">
-                                    <a href="#" onclick="editcategory({{$item->coupon_category_id}})" class="iconic iconic--delete " data-xf-init="tooltip" title="Edit" >
+                                    <a href="#"  onclick="editcategory(['{{$item->coupon_category_id}}', '{{$item->coupon_category_name}}', '{{asset('images/upload/'.$item->category_icon)}}'])"  class="iconic iconic--delete " data-xf-init="tooltip" title="Edit" >
                                         <i class="fa fa-pen"></i>
                                     </a>
                                 </td>
@@ -197,7 +191,203 @@
 	
 				<input type="hidden" name="_xfToken" value="1585630502,5960bd220dbeb2462c52dc5596743cdc" />
 				
-			</form>
+            </form>
+                        <a href="#" class="button button--icon float-right mt-5 mb-2"  data-toggle="modal" data-target="#create-coupon">
+                            <span class="button-text">Create Coupon</span>
+                        </a>
+  
+                        
+                    <!-- Modal -->
+                    <div class="modal fade" id="create-coupon" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalCenterTitle">Create Coupon</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="{{url('create-coupon')}}" method="post" enctype="multipart/form-data">
+                                        {{ csrf_field() }}
+                                        <div class="form-group row">
+                                            <div class="col-sm-12">
+                                                <label for="inputEmail3" class="col-form-label">Tier</label>
+                                                <select name="coupon_tier_id" class="form-control" id="">
+                                                    <option value="">- Select Tier -</option>
+                                                    @foreach ($tier as $item)
+                                                        <option value="{{$item->coupon_tier_id}}">{{$item->trophy_tier}} </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-sm-12">
+                                                <label for="inputEmail3" class="col-form-label">Category</label>
+                                                <select name="coupon_category_id" class="form-control" id="">
+                                                        <option value="">- Select Category -</option>
+                                                    @foreach ($coupon_category as $item)
+
+                                                        <option value="{{$item->coupon_category_id}}"> {{$item->coupon_category_name}} </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-sm-12">
+                                                <label for="inputEmail3" class="col-form-label">Coupon Name</label>
+                                                <input type="text" name="coupon_name" placeholder="Name" class="form-control" id="inputEmail3" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <div class="col-sm-12">
+                                                <label for="inputEmail3" class="col-form-label">Expired</label>
+                                                <input type="date" name="coupon_expired" class="form-control" id="inputEmail3" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <div class="col-sm-10">
+                                                <label for="inputEmail3" class="col-form-label">Banner Coupon</label>
+                                                <br>
+                                                <input type="file" name="coupon_banner"  id="inputEmail3"  required>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-sm-12">
+                                                <label for="inputEmail3" class="col-form-label">Coupon Description</label>
+                                                <textarea rows="14" cols="50" rows="10" placeholder="Coupon Description" class="form-control" name="coupon_description" id="editor" ></textarea>
+                                            </div>
+                                        </div>
+                                </div>
+                                <div class="modal-footer">
+                                    {{-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> --}}
+                                    <button type="submit" class="button button-icon btn-sm">Create</button>
+                                </form>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                            
+                        <table class="table table-hover  mb-5">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Tier</th>
+                                    <th scope="col">Category</th>
+                                    <th scope="col">Coupon</th>
+                                    <th class="text-center">Point</th>
+                                    <th class="text-center">Coupon expired</th>
+                                    <th scope="col">Tools</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($coupon as $item)
+                                    
+                                <tr>
+                                    <td>
+                                        <img src="{{asset('images/upload/'.$item->trophy_icon)}}" width="50px" alt="">
+                                        {{$item->trophy_tier}}
+                                    </td>
+                                    <td>
+                                        
+                                        <img src="{{asset('images/upload/'.$item->category_icon)}}" width="50px" alt="">
+                                        {{$item->coupon_category_name}}
+                                    </td>
+                                    <td>
+                                        <img src="{{asset('images/upload/'.$item->coupon_banner)}}" width="50px" alt="">
+                                        {{$item->coupon_name}}
+                                        
+                                    </td>
+                                    <td class="text-center">{{$item->point_start}} - {{$item->point_finish}}</td>
+                                    <td class="text-center">   {{$item->coupon_expired}}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            {{-- <a href="#" class="btn btn-outline-primary btn-sm">
+                                                <i class="fa fa-link"></i>
+                                            </a> --}}
+
+                                            <a href="{{url('edit-coupon/'.$item->coupon_id)}}" class="btn btn-outline-primary btn-sm">
+                                                <i class="fa fa-pen"></i>
+                                            </a>
+                                            <button type="button" onclick="deletecoupon([ {{$item->coupon_id}}, '{{$item->coupon_name}}'])" class="btn btn-outline-danger btn-sm">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endforeach
+                                
+                            </tbody>
+                        </table>
+                                                    <!-- Button trigger modal -->
+                            {{-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                                Launch demo modal
+                            </button> --}}
+                            
+                            <!-- Modal -->
+                            <div class="modal fade" id="delete-coupon" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalCenterTitle">Delete Coupon</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body modal-body-delete-coupon">
+                                            Delete Coupon <b class="text-danger" ></b> ?
+                                        </div>
+                                        <div class="modal-footer">
+                                            {{-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> --}}
+                                            <a  class="btn btn-outline-danger btn-sm btn-delete-coupon">Delete</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            
+                            <div class="modal fade" id="edit-category" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalCenterTitle">Edit Category</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body modal-body-delete-coupon">
+                                            <form action="" method="post" enctype="multipart/form-data" id="edit-category-form">
+                                                {{ csrf_field() }}
+                                                <div class="form-group row">
+                                                    <div class="col-sm-10">
+                                                        <label for="inputEmail3" class="col-form-label">Category name</label>
+                                                        <input type="text" name="coupon_category_name" class="form-control" id="edit-category-name">
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-group row">
+                                                    <div class="col-sm-10">
+                                                        <label for="inputEmail3" class="col-form-label">Icon</label>
+                                                        <br>
+                                                        <input type="file" name="category_icon"  id="inputEmail3">
+                                                        <img src="" id="edit-icon-category" class="pt-2" alt="">
+                                                    </div>
+                                                </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            {{-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> --}}
+                                                <button  class="btn btn-outline-success btn-sm btn-delete-coupon">Update</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                    </div>
 		
 				</div>
 			</main>
@@ -205,5 +395,94 @@
 	</div>
 </div>
 
+<script src="https://cdn.ckeditor.com/ckeditor5/17.0.0/classic/ckeditor.js"></script>
+    
+<script>tinymce.init({selector:'textarea'});</script>
+<script>
 
+    function editcoupon(data){
+        
+        $('#edit-coupon').modal('show')
+
+        // $('#edit-coupon-tier').val(data[1])
+
+        $('#edit-coupon-form').attr('action', "{{url('update-coupon')}}"+'/'+data[0])
+    }
+    
+
+    function editcategory(data){
+        $('#edit-category').modal('show')
+
+        $('#edit-category-name').val(data[1])
+        $('#edit-icon-category').attr('src', data[2])
+        $('#edit-category-form').attr('action', "{{url('update-category')}}"+'/'+data[0])
+    }
+
+
+    function deletecoupon(data){
+        $('#delete-coupon').modal('show')
+
+        $('.modal-body-delete-coupon b').text(data[1])
+        $('.btn-delete-coupon').attr("href", "{{url('delete-coupon')}}"+'/'+ data[0])
+    }
+    function deletecoupon(data){
+        $('#delete-coupon').modal('show')
+
+        $('.modal-body-delete-coupon b').text(data[1])
+        $('.btn-delete-coupon').attr("href", "{{url('delete-coupon')}}"+'/'+ data[0])
+    }
+
+     ClassicEditor.create(
+
+document.querySelector( '#editor2' ), {
+    image: {
+        // You need to configure the image toolbar, too, so it uses the new style buttons.
+        toolbar: [ 'imageTextAlternative', '|', 'imageStyle:alignLeft', 'imageStyle:full', 'imageStyle:alignRight' ],
+
+        styles: [
+            // This option is equal to a situation where no style is applied.
+            'full',
+
+            // This represents an image aligned to the left.
+            'alignLeft',
+
+            // This represents an image aligned to the right.
+            'alignRight'
+        ]
+    }
+} 
+
+
+).catch( error => {
+
+console.error( error );
+
+});
+
+ClassicEditor.create(
+
+document.querySelector( '#editor' ), {
+    image: {
+        // You need to configure the image toolbar, too, so it uses the new style buttons.
+        toolbar: [ 'imageTextAlternative', '|', 'imageStyle:alignLeft', 'imageStyle:full', 'imageStyle:alignRight' ],
+
+        styles: [
+            // This option is equal to a situation where no style is applied.
+            'full',
+
+            // This represents an image aligned to the left.
+            'alignLeft',
+
+            // This represents an image aligned to the right.
+            'alignRight'
+        ]
+    }
+} 
+
+).catch( error => {
+
+console.error( error );
+
+});
+</script>
 @endsection

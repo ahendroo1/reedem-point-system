@@ -285,9 +285,14 @@ xs_TypeEditor: 'text',
 			no_items_matched_your_filter: "No items matched your filter."
 		});
         
+
+
         
         
-	</script>
+    </script>
+    
+
+    @yield('jquery')
 
 
 </body>
